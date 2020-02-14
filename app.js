@@ -83,7 +83,7 @@ function runSearch1() {
                     byeee();
                     break;
             }
-
+        
 
             function viewEmp() {
                 console.log(`\x1b[32m`, '...................................')
@@ -259,9 +259,7 @@ function runSearch1() {
 
             function removeEmp() {
                 clear()
-                console.log(`\x1b[32m`, '...................................')
-                console.log(`\x1b[32m`, 'YOURE FIRED!')
-                console.log(`\x1b[32m`, '...................................')
+            
                 inquirer
                     .prompt(
                         {
@@ -278,6 +276,7 @@ function runSearch1() {
                             },
                             function (err, res) {
                                 if (err) throw err;
+                                clear()
                                 console.log(`\x1b[32m`, '...................................')
                                 console.log(`\x1b[32m`, 'YOURE FIRED!')
                                 console.log(`\x1b[32m`, '...................................')
