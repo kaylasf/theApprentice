@@ -83,292 +83,326 @@ function runSearch1() {
                     byeee();
                     break;
             }
-        
-
-            function viewEmp() {
-                console.log(`\x1b[32m`, '...................................')
-                console.log(`\x1b[32m`, 'HERE ARE THE SURVIVING EMPLOYEES')
-                console.log(`\x1b[32m`, '...................................')
-
-                connection.query("SELECT * FROM employee2", function (err, res) {
-                    if (err) throw err;
-                    clear()
-                    console.table(res)
-                    runSearch1()
-                })
-            }
-
-
-            function viewEmpDep() {
-                console.log(`\x1b[32m`, '...................................')
-                console.log(`\x1b[32m`, 'HERE ARE THE EMPLOYEES BY DEPARTMENT')
-                console.log(`\x1b[32m`, '...................................')
-                inquirer
-                    .prompt({
-                        name: "action",
-                        type: "rawlist",
-                        message: "Which department would you like to look through?",
-                        choices: [
-                            "Management",
-                            "Human Resources",
-                            "Marketing",
-                            "Legal",
-                            "Finance",
-                            "Engineering",
-                            "Sales"
-                        ]
-                    })
-                    .then(function (answer) {
-
-
-                        var query = " SELECT * FROM apprentice.employee2 WHERE ? ";
-                        connection.query(query, { department_name: answer.action }, function (err, res) {
-                            if (err) throw err;
-                            clear()
-                            console.table(res)
-                            runSearch1()
-                        });
-                    });
-            }
-
-
-
-
-            function viewEmpMan() {
-                console.log(`\x1b[32m`, '...................................')
-                console.log(`\x1b[32m`, 'HERE ARE EMPLOYEES BY MANAGER!')
-                console.log(`\x1b[32m`, '...................................')
-                clear()
-                inquirer
-                    .prompt({
-                        name: "action",
-                        type: "rawlist",
-                        message: "Which manager are you wanting to stalk?",
-
-                        choices: ["Kali Mah: Senior Manager",
-                            "Richard Swett: Human Resources",
-                            "Janice Keihanaikukauakahihuliheekahaunaele: Marketing Manager",
-                            "Rollo Koster: Legal Manager",
-                            "Kash Rehster: Financial Manager",
-                            "Lord Brain: Engineering Manager",
-                            "Gowen Geter: Sales Manager"]
-
-                    }).then(function (answer) {
-
-
-                        connection.query("SELECT * FROM apprentice.employee2 WHERE ?", { manager: answer.action }, function (err, res) {
-                            if (err) throw err;
-                            clear()
-
-                            console.table(res)
-                            runSearch1()
-
-                        });
-                    });
-
-
-
-            }
-
-
-            function addEmp() {
-                console.log(`\x1b[32m`, '...................................')
-                console.log(`\x1b[32m`, 'BEGIN CREATING YOUR NEW EMPLOYEE!')
-                console.log(`\x1b[32m`, '...................................')
-                inquirer
-                    .prompt([
-                        {
-                            name: "firstName",
-                            type: "input",
-                            message: "Employees First Name:"
-                        },
-                        {
-                            name: "lasttName",
-                            type: "input",
-                            message: "Employees Last Name:"
-                        },
-
-                        {
-                            name: "title",
-                            type: "input",
-                            message: "Employee Job Title:"
-                        },
-                        {
-                            name: "department",
-                            type: "rawlist",
-                            message: "Employee Department:",
-                            choices: [
-                                "Management",
-                                "Human Resources",
-                                "Marketing",
-                                "Legal",
-                                "Finance",
-                                "Engineering",
-                                "Sales"
-                            ]
-                        },
-                        {
-                            name: "salary",
-                            type: "rawlist",
-                            message: "Employee Salary:",
-                            choices: [
-                                "50000",
-                                "60000",
-                                "65000",
-                                "70000",
-                                "80000",
-                                "90000",
-                                "100000"
-                            ]
-                        },
-                        {
-                            name: "manager",
-                            type: "rawlist",
-                            message: "Employee Manager:",
-
-                            choices: ["Kali Mah: Senior Manager",
-                                "Richard Swett: Human Resources",
-                                "Janice Keihanaikukauakahihuliheekahaunaele: Marketing Manager",
-                                "Rollo Koster: Legal Manager",
-                                "Kash Rehster: Financial Manager",
-                                "Lord Brain: Engineering Manager",
-                                "Gowen Geter: Sales Manager"]
-
-                        }]
-
-                    ).then(function (answer) {
-                        connection.query("INSERT INTO employee2 SET ?",
-                            {
-                                first_name: answer.firstName,
-                                last_name: answer.lasttName,
-                                title: answer.title,
-                                department_name: answer.department,
-                                salary: answer.salary,
-                                manager: answer.manager
-
-                            }, function (err, res) {
-                                if (err) throw err;
-                                clear()
-                                viewEmp()
-
-                            })
-                    })
-
-            }
-
-
-            function removeEmp() {
-                clear()
-            
-                inquirer
-                    .prompt(
-                        {
-                            name: "delete",
-                            type: "input",
-                            message: "Employees ID:"
-                        }
-                    ).then(function (answer) {
-
-                        connection.query(
-                            "DELETE FROM employee2 WHERE ?",
-                            {
-                                id: answer.delete
-                            },
-                            function (err, res) {
-                                if (err) throw err;
-                                clear()
-                                console.log(`\x1b[32m`, '...................................')
-                                console.log(`\x1b[32m`, 'YOURE FIRED!')
-                                console.log(`\x1b[32m`, '...................................')
-
-                                viewEmp()
-
-                            }
-                        );
-                    })
-
-            }
-
-
-            function updateEmpRole() {
-                clear()
-                inquirer
-                    .prompt([
-                        {
-                            name: "updRole",
-                            type: "input",
-                            message: "Employees ID:"
-                        },
-                        {
-                            name: "title",
-                            type: "input",
-                            message: "Employee NEW Job Title:"
-                        }]
-                    )
-                    .then(function (answer) {
-
-                        connection.query(
-                            `UPDATE employee2 SET title = '${answer.title}' WHERE id = '${answer.updRole}'`,
-
-                            function (err, res) {
-                                if (err) throw err;
-                                console.log(`\x1b[32m`, '...................................')
-                                console.log(`\x1b[32m`, 'YOURE FIRED!')
-                                console.log(`\x1b[32m`, '...................................')
-
-                                viewEmp()
-
-                            }
-                        );
-                    })
-
-
-            }
-            function updateEmpManager() {
-
-                clear()
-                inquirer
-                    .prompt([
-                        {
-                            name: "updMan",
-                            type: "input",
-                            message: "Employees ID:"
-                        },
-                        {
-                            name: "manager",
-                            type: "rawlist",
-                            message: "Employees new manager?",
-
-                            choices: ["Kali Mah: Senior Manager",
-                                "Richard Swett: Human Resources",
-                                "Janice Keihanaikukauakahihuliheekahaunaele: Marketing Manager",
-                                "Rollo Koster: Legal Manager",
-                                "Kash Rehster: Financial Manager",
-                                "Lord Brain: Engineering Manager",
-                                "Gowen Geter: Sales Manager"]
-                        }
-                    ]
-                    ).then(function (answer) {
-
-                        connection.query(
-                            `UPDATE employee2 SET manager = '${answer.manager}' WHERE id = '${answer.updMan}'`,
-
-                            function (err, res) {
-                                if (err) throw err;
-
-
-                                viewEmp()
-
-                            }
-                        );
-                    })
-
-            }
-            function byeee() {
-                connection.end();
-
-            }
-
 
         })
 }
+
+function viewEmp() {
+    clear()
+    console.log(`\x1b[32m`, '...................................')
+    console.log(`\x1b[32m`, 'HERE ARE THE SURVIVING EMPLOYEES')
+    console.log(`\x1b[32m`, '...................................')
+
+    connection.query("SELECT * FROM employee2", function (err, res) {
+        if (err) throw err;
+        if (!res) {
+            clear()
+            console.log(`\x1b[32m`, '...................................')
+            console.log(`\x1b[32m`, 'ALL EMPLOYEES HAVE BEEN FIRED - BUILD NEW TEAMS')
+            console.log(`\x1b[32m`, '...................................')
+            runSearch1()
+        } else {
+            clear()
+            console.table(res)
+            runSearch1()
+        }
+
+    })
+}
+
+
+function viewEmpDep() {
+    clear()
+    inquirer
+        .prompt({
+            name: "action",
+            type: "rawlist",
+            message: "Which department would you like to look through?",
+            choices: [
+                "Management",
+                "Human Resources",
+                "Marketing",
+                "Legal",
+                "Finance",
+                "Engineering",
+                "Sales"
+            ]
+        })
+        .then(function (answer) {
+
+
+            var query = " SELECT * FROM apprentice.employee2 WHERE ? ";
+            connection.query(query, { department_name: answer.action }, function (err, res) {
+                if (err) throw err;
+                if (res[0] == undefined) {
+                    clear()
+                    console.log(`\x1b[32m`, '...................................')
+                    console.log(`\x1b[32m`, 'THEY HAVE ALL DIED- BUILD NEW TEAM FOR THIS DEPARTMENT')
+                    console.log(`\x1b[32m`, '...................................')
+                    runSearch1()
+                } else {
+                    clear()
+                    console.log(`\x1b[32m`, '...................................')
+                    console.log(`\x1b[32m`, 'HERE ARE THE EMPLOYEES BY DEPARTMENT')
+                    console.log(`\x1b[32m`, '...................................')
+                    console.table(res)
+                    runSearch1()
+                }
+            });
+        });
+}
+
+
+
+
+function viewEmpMan() {
+
+    clear()
+    console.log(`\x1b[32m`, '...................................')
+    console.log(`\x1b[32m`, 'HERE ARE EMPLOYEES BY MANAGER!')
+    console.log(`\x1b[32m`, '...................................')
+
+    inquirer
+        .prompt({
+            name: "action",
+            type: "rawlist",
+            message: "Which manager are you wanting to stalk?",
+
+            choices: ["Kali Mah: Senior Manager",
+                "Richard Swett: Human Resources",
+                "Janice Keihanaikukauakahihuliheekahaunaele: Marketing Manager",
+                "Rollo Koster: Legal Manager",
+                "Kash Rehster: Financial Manager",
+                "Lord Brain: Engineering Manager",
+                "Gowen Geter: Sales Manager"]
+
+        }).then(function (answer) {
+
+
+            connection.query("SELECT * FROM apprentice.employee2 WHERE ?", { manager: answer.action }, function (err, res) {
+                if (err) throw err;
+                console.log(res[0])
+
+                if (res[0] == undefined) {
+                    clear()
+                    console.log(`\x1b[32m`, '...................................')
+                    console.log(`\x1b[32m`, 'EVERYONE HAS BEEN FIRED-BUILD A NEW TEAM')
+                    console.log(`\x1b[32m`, '...................................')
+                    runSearch1()
+                } else {
+                    console.table(res)
+                    runSearch1()
+                }
+
+            });
+        });
+
+
+
+}
+
+
+function addEmp() {
+    clear()
+    console.log(`\x1b[32m`, '...................................')
+    console.log(`\x1b[32m`, 'BEGIN CREATING YOUR NEW EMPLOYEE!')
+    console.log(`\x1b[32m`, '...................................')
+    inquirer
+        .prompt([
+            {
+                name: "firstName",
+                type: "input",
+                message: "Employees First Name:"
+            },
+            {
+                name: "lasttName",
+                type: "input",
+                message: "Employees Last Name:"
+            },
+
+            {
+                name: "title",
+                type: "input",
+                message: "Employee Job Title:"
+            },
+            {
+                name: "department",
+                type: "rawlist",
+                message: "Employee Department:",
+                choices: [
+                    "Management",
+                    "Human Resources",
+                    "Marketing",
+                    "Legal",
+                    "Finance",
+                    "Engineering",
+                    "Sales"
+                ]
+            },
+            {
+                name: "salary",
+                type: "rawlist",
+                message: "Employee Salary:",
+                choices: [
+                    "50000",
+                    "60000",
+                    "65000",
+                    "70000",
+                    "80000",
+                    "90000",
+                    "100000"
+                ]
+            },
+            {
+                name: "manager",
+                type: "rawlist",
+                message: "Employee Manager:",
+
+                choices: ["Kali Mah: Senior Manager",
+                    "Richard Swett: Human Resources",
+                    "Janice Keihanaikukauakahihuliheekahaunaele: Marketing Manager",
+                    "Rollo Koster: Legal Manager",
+                    "Kash Rehster: Financial Manager",
+                    "Lord Brain: Engineering Manager",
+                    "Gowen Geter: Sales Manager"]
+
+            }]
+
+        ).then(function (answer) {
+            connection.query("INSERT INTO employee2 SET ?",
+                {
+                    first_name: answer.firstName,
+                    last_name: answer.lasttName,
+                    title: answer.title,
+                    department_name: answer.department,
+                    salary: answer.salary,
+                    manager: answer.manager
+
+                }, function (err, res) {
+                    if (err) throw err;
+                    clear()
+                    viewEmp()
+
+                })
+        })
+
+}
+
+
+function removeEmp() {
+    clear()
+
+
+    inquirer
+        .prompt(
+            {
+                name: "delete",
+                type: "input",
+                message: "Employees ID:"
+            }
+        ).then(function (answer) {
+
+            connection.query(
+                "DELETE FROM employee2 WHERE ?",
+                {
+                    id: answer.delete
+                },
+                function (err, res) {
+                    if (err) throw err;
+
+                    clear()
+                    console.log(`\x1b[31m"`, '...................................')
+                    console.log(`\x1b[31m"`, 'YOURE FIRED!')
+                    console.log(`\x1b[31m"`, '...................................')
+                    viewEmp()
+
+                }
+            );
+        })
+
+}
+
+
+function updateEmpRole() {
+    clear()
+    inquirer
+        .prompt([
+            {
+                name: "updRole",
+                type: "input",
+                message: "Employees ID:"
+            },
+            {
+                name: "title",
+                type: "input",
+                message: "Employee NEW Job Title:"
+            }]
+        )
+        .then(function (answer) {
+
+
+            connection.query(
+                `UPDATE employee2 SET title = '${answer.title}' WHERE id = '${answer.updRole}'`,
+
+                function (err, res) {
+                    if (err) throw err;
+
+                    console.log(`\x1b[31m"`, '...................................')
+                    console.log(`\x1b[31m"`, 'PLEASE WELCOME YOUR NEW COMPETITIOR!')
+                    console.log(`\x1b[31m"`, '...................................')
+                    viewEmp()
+
+                }
+            );
+        })
+
+
+}
+function updateEmpManager() {
+
+    clear()
+    inquirer
+        .prompt([
+            {
+                name: "updMan",
+                type: "input",
+                message: "Employees ID:"
+            },
+            {
+                name: "manager",
+                type: "rawlist",
+                message: "Employees new manager?",
+
+                choices: ["Kali Mah: Senior Manager",
+                    "Richard Swett: Human Resources",
+                    "Janice Keihanaikukauakahihuliheekahaunaele: Marketing Manager",
+                    "Rollo Koster: Legal Manager",
+                    "Kash Rehster: Financial Manager",
+                    "Lord Brain: Engineering Manager",
+                    "Gowen Geter: Sales Manager"]
+            }
+        ]
+        ).then(function (answer) {
+
+            connection.query(
+                `UPDATE employee2 SET manager = '${answer.manager}' WHERE id = '${answer.updMan}'`,
+
+                function (err, res) {
+                    if (err) throw err;
+                    console.log(`\x1b[31m"`, '...................................')
+                    console.log(`\x1b[31m"`, 'YOURE FIRED!')
+                    console.log(`\x1b[31m"`, '...................................')
+
+                    viewEmp()
+
+                }
+            );
+        })
+
+}
+function byeee() {
+    connection.end();
+
+}
+
+
